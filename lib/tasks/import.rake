@@ -1,5 +1,41 @@
 namespace :import do
   require 'pry'
+  
+  def create_entries_for_p_nouns(json_entries)
+    json_entries.each do |word|
+      new_entry = PNoun.new(
+        entry: word[0],
+        english: word[5]
+      )
+      unless word[1].empty?
+        new_entry.reading = word[1] 
+      end
+      new_entry.save!
+      unless word[2].empty?
+        tags = word[2].split(' ')
+        tags.each do |tag|
+          # find associated MetaTag object for each meta tag
+          meta_tag = MetaTag.where(tag: tag)
+          # binding.pry
+          PNounTag.create(
+            p_noun_id: new_entry.id,
+            meta_tag_id: meta_tag[0].id
+          )
+        end
+      end
+      unless word[7].empty?
+        tags = word[7].split(' ')
+        tags.each do |tag|
+          # find associated MetaTag object for each meta tag
+          meta_tag = MetaTag.where(tag: tag)
+          PNounTag.create(
+            p_noun_id: new_entry.id,
+            meta_tag_id: meta_tag[0].id
+          )
+        end
+      end
+    end
+  end
 
   desc "add rank to JWords from tsv file"
   task add_rank: :environment do 
@@ -35,4 +71,32 @@ namespace :import do
       end
     end
   end
+
+  desc "add Name tags to Meta Tags"
+  task add_name_tags: :environment do
+    tags = JSON.parse(File.read('./db/name-dict/tag_bank_1.json'));
+    tags_hash = {}
+    tags.each do |tag|
+      tags_hash[tag[0]] = tag[3]
+    end
+    tags_hash.each do |entry|
+      MetaTag.create(
+        tag: entry[0],
+        meaning: entry[1]
+      )
+      puts "Created Meta Tag for #{entry[0]} #{entry[1]}"
+    end
+end
+
+  desc "add entires from Names dict"
+  task add_proper_nouns: :environment do
+    (1..75).to_a.each do |index|
+      file_path = "./db/name-dict/term_bank_#{index}.json"
+      file_json = JSON.parse(File.read(file_path))
+      puts "Creating Entries and Entry Tags for file #{index}" 
+      create_entries_for_p_nouns(file_json)
+      puts "Successfully Created Entries and Entry Tags for file #{index}"
+    end
+  end
+
 end

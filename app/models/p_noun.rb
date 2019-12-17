@@ -1,0 +1,2 @@
+class PNoun < ApplicationRecord
+end
