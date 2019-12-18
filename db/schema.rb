@@ -10,10 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_16_100305) do
+ActiveRecord::Schema.define(version: 2019_12_17_095137) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "imported_texts", force: :cascade do |t|
+    t.string "title"
+    t.text "content"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
 
   create_table "j_word_tags", force: :cascade do |t|
     t.bigint "j_word_id", null: false
@@ -59,8 +66,22 @@ ActiveRecord::Schema.define(version: 2019_12_16_100305) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "text_entries", force: :cascade do |t|
+    t.bigint "imported_text_id", null: false
+    t.bigint "j_word_id", null: false
+    t.bigint "p_noun_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["imported_text_id"], name: "index_text_entries_on_imported_text_id"
+    t.index ["j_word_id"], name: "index_text_entries_on_j_word_id"
+    t.index ["p_noun_id"], name: "index_text_entries_on_p_noun_id"
+  end
+
   add_foreign_key "j_word_tags", "j_words"
   add_foreign_key "j_word_tags", "meta_tags"
   add_foreign_key "p_noun_tags", "meta_tags"
   add_foreign_key "p_noun_tags", "p_nouns"
+  add_foreign_key "text_entries", "imported_texts"
+  add_foreign_key "text_entries", "j_words"
+  add_foreign_key "text_entries", "p_nouns"
 end

@@ -1,0 +1,27 @@
+<%= form_with(model: imported_text, local: true) do |form| %>
+  <% if imported_text.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(imported_text.errors.count, "error") %> prohibited this imported_text from being saved:</h2>
+
+      <ul>
+        <% imported_text.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :title %>
+    <%= form.text_field :title %>
+  </div>
+
+  <div class="field">
+    <%= form.label :content %>
+    <%= form.text_area :content %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

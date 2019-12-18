@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  imported_text: one
+  j_word: one
+  p_noun: one
+
+two:
+  imported_text: two
+  j_word: two
+  p_noun: two

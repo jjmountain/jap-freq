@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Imported Texts</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Content</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @imported_texts.each do |imported_text| %>
+      <tr>
+        <td><%= imported_text.title %></td>
+        <td><%= imported_text.content %></td>
+        <td><%= link_to 'Show', imported_text %></td>
+        <td><%= link_to 'Edit', edit_imported_text_path(imported_text) %></td>
+        <td><%= link_to 'Destroy', imported_text, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Imported Text', new_imported_text_path %>
