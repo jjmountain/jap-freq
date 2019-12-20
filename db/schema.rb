@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_17_095137) do
+ActiveRecord::Schema.define(version: 2019_12_20_002436) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,6 +20,7 @@ ActiveRecord::Schema.define(version: 2019_12_17_095137) do
     t.text "content"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "missing_words", default: [], array: true
   end
 
   create_table "j_word_tags", force: :cascade do |t|
@@ -68,10 +69,12 @@ ActiveRecord::Schema.define(version: 2019_12_17_095137) do
 
   create_table "text_entries", force: :cascade do |t|
     t.bigint "imported_text_id", null: false
-    t.bigint "j_word_id", null: false
-    t.bigint "p_noun_id", null: false
+    t.bigint "j_word_id"
+    t.bigint "p_noun_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "start_position", null: false
+    t.integer "end_position", null: false
     t.index ["imported_text_id"], name: "index_text_entries_on_imported_text_id"
     t.index ["j_word_id"], name: "index_text_entries_on_j_word_id"
     t.index ["p_noun_id"], name: "index_text_entries_on_p_noun_id"
