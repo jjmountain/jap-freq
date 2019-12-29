@@ -8,8 +8,8 @@ class ImportedText < ApplicationRecord
 
   # returns a collection of j_words in the text for under the rank specified
 
-  def j_words(rank = 152442)
-    JWord.joins(text_entries: [:imported_text]).where('imported_text_id = ? AND cwj_rank >= ?', id, rank).uniq
+  def j_words
+    JWord.joins(text_entries: [:imported_text]).where('imported_text_id = ?', id).uniq
   end
 
 end
