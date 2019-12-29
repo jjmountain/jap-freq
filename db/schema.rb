@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_20_002436) do
+ActiveRecord::Schema.define(version: 2019_12_28_034709) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -75,6 +75,7 @@ ActiveRecord::Schema.define(version: 2019_12_20_002436) do
     t.datetime "updated_at", precision: 6, null: false
     t.integer "start_position", null: false
     t.integer "end_position", null: false
+    t.boolean "found_by_kanji"
     t.index ["imported_text_id"], name: "index_text_entries_on_imported_text_id"
     t.index ["j_word_id"], name: "index_text_entries_on_j_word_id"
     t.index ["p_noun_id"], name: "index_text_entries_on_p_noun_id"
