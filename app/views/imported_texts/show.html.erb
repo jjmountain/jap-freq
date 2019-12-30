@@ -1,14 +1,18 @@
-<p id="notice"><%= notice %></p>
 
-<p>
-  <strong>Title:</strong>
-  <%= @imported_text.title %>
-</p>
+<div class="container">
+  <p id="notice"><%= notice %></p>
 
-<p>
-  <strong>Content:</strong>
-  <%= @imported_text.content %>
-</p>
+  <p>
+    <strong>Title:</strong>
+    <%= @imported_text.title %>
+  </p>
 
-<%= link_to 'Edit', edit_imported_text_path(@imported_text) %> |
-<%= link_to 'Back', imported_texts_path %>
+  <p>
+    <strong>Content:</strong>
+    <%= simple_format(@imported_text.content) %>
+  </p>
+
+  <%= link_to 'Edit', edit_imported_text_path(@imported_text) %> |
+  <%= link_to 'Back', imported_texts_path %>
+
+</div>

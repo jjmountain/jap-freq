@@ -1,0 +1,12 @@
+<div class="card" style="width: 18rem;">
+  <img class="card-img-top" src="..." alt="Card image cap">
+  <div class="card-body">
+    <h5 class="card-title"><%= card.title %></h5>
+    <h6 class="card-subtitle mb-2 text-muted">Vocab Items: <%= card.j_words.count %> </h6>
+    <h6 class="card-subtitle mb-2 text-muted">Proper Nouns: <%= card.p_nouns.count %></h6>
+    <a href="#" class="card-link">Card link</a>
+    <%= link_to 'Destroy', card, method: :delete, data: { confirm: 'Are you sure?' } , class: 'card-link' %>
+    <%= link_to 'Edit', edit_imported_text_path(card), class: 'card-link' %>
+    <%= link_to 'Show', card, class: 'card-link' %>
+  </div>
+</div>
