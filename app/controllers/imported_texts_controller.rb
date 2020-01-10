@@ -10,6 +10,9 @@ class ImportedTextsController < ApplicationController
   # GET /imported_texts/1
   # GET /imported_texts/1.json
   def show
+    book = Nokogiri::HTML(@imported_text.content.download)
+    @book_content = book.search('.main').text
+    raise
   end
 
   # GET /imported_texts/new

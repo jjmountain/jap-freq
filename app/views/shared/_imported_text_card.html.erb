@@ -1,5 +1,5 @@
 <div class="card" style="width: 18rem;">
-  <%# <%= image_tag card.cover_photo, class: 'card-img-top' %>
+  <%= cl_image_tag card.cover_photo.key, height: 200, width: 300, crop: :fill, gravity: :north, class: 'card-img-top' %>
   <div class="card-body">
     <h5 class="card-title"><%= card.title %></h5>
     <h6 class="card-subtitle mb-2 text-muted">Vocab Items: <%= card.j_words.count %> </h6>
