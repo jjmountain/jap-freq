@@ -61,8 +61,38 @@ class TokenizeJob < ApplicationJob
     # Do something later
     puts "Starting tokenization of text"
 
-    ## grab full text, split on paragraph and remove blank spaces and strip leading/trailing whitespace
-    full_text_arr = ImportedText.find(id).content.split(/\r\n+/).reject { |s| s.empty? }.map { |s| s.strip }
+
+    html_content = ImportedText.find(id).content.download
+
+    book = Nokogiri::HTML(html_content)
+    
+    furigana_hash = {}
+    
+    # grab all the furigana in the text and store in a kanji/reading hash
+    # remove the readings from the kanji
+    # when making entries later check in the furigana hash first
+
+    book.search('//ruby').each do |element|
+      kanji = element.search('rb').text
+      reading = element.search('rt').text
+      furigana_hash[kanji] = reading
+      reading_nodes = element.search('rt')
+      reading_nodes.each { |node| node.remove } 
+    end
+
+    imported_text = ImportedText.find(id)
+    imported_text.update(
+      furigana_hash: furigana_hash
+    )
+
+    initial_text_arr = []
+
+    book.search('.main .calibre').each do |element|
+      initial_text_arr << element.text.strip
+    end
+
+    ## remove blank lines from text array
+    full_text_arr = initial_text_arr.reject { |s| s.empty? }
 
     # grab twenty paragraphs, join to a string, remove punctuation characters and send to API 
     batch = full_text_arr.shift(50000000).join('')
@@ -80,19 +110,6 @@ class TokenizeJob < ApplicationJob
         word_to_save = ''
         word_to_save = JWord.find_by('entry = ? OR reading = ?', word_to_look_up, word_to_look_up) || PNoun.find_by('entry = ? OR reading = ?', word_to_look_up, word_to_look_up)
         if !word_to_save.nil?
-          # check for furigana first, if it is kana that is the same meaning as the kanji before it then skip
-          if word_to_look_up.match?(/\p{Hiragana}/)
-            preceding_kanji_token = json["tokens"][index - 1]
-            if preceding_kanji_token["features"][6].match?(/\p{Han}/)
-              word_to_check_reading_of = JWord.find_by(entry: preceding_kanji_token["features"][6]) || PNoun.find_by(entry: preceding_kanji_token["features"][6])
-              unless word_to_check_reading_of.nil?
-                if word_to_check_reading_of.reading == word_to_look_up
-                  next
-                end
-              end
-            end
-          end
-          # it's not furigana then look it up and save the entry to text_entry
           if word_to_save.class == JWord
             text_entry_to_save = TextEntry.new(imported_text_id: id, j_word_id: word_to_save.id, start_position: token['start'], end_position: token['end'])
           else

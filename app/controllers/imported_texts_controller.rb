@@ -26,6 +26,7 @@ class ImportedTextsController < ApplicationController
   def create
     @imported_text = ImportedText.new(imported_text_params)
 
+    
     respond_to do |format|
       if @imported_text.save
         format.html { redirect_to @imported_text, notice: 'Imported text was successfully created.' }
@@ -35,6 +36,7 @@ class ImportedTextsController < ApplicationController
         format.json { render json: @imported_text.errors, status: :unprocessable_entity }
       end
     end
+   
   end
 
   # PATCH/PUT /imported_texts/1
@@ -69,6 +71,6 @@ class ImportedTextsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def imported_text_params
-      params.require(:imported_text).permit(:title, :content)
+      params.require(:imported_text).permit(:title, :content, :cover_photo)
     end
 end

@@ -1,5 +1,9 @@
 class ImportedText < ApplicationRecord
-  has_many :text_entries
+  has_many :text_entries, dependent: :destroy
+  has_one_attached :content
+  has_one_attached :cover_photo
+  serialize :furigana_hash
+
 
   # returns an array of the associated proper nouns
   def p_nouns
