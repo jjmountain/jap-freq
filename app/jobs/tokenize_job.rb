@@ -56,14 +56,16 @@ class TokenizeJob < ApplicationJob
 
   def perform(id)
 
+    
+    
     position = 0
     
     # Do something later
     puts "Starting tokenization of text"
-
-
-    html_content = ImportedText.find(id).content.download
-
+    
+    
+    html_content = ImportedText.find(id).html_content
+    
     book = Nokogiri::HTML(html_content)
     
     furigana_hash = {}
@@ -71,7 +73,7 @@ class TokenizeJob < ApplicationJob
     # grab all the furigana in the text and store in a kanji/reading hash
     # remove the readings from the kanji
     # when making entries later check in the furigana hash first
-
+    
     book.search('//ruby').each do |element|
       kanji = element.search('rb').text
       reading = element.search('rt').text
@@ -79,18 +81,18 @@ class TokenizeJob < ApplicationJob
       reading_nodes = element.search('rt')
       reading_nodes.each { |node| node.remove } 
     end
-
+    
     imported_text = ImportedText.find(id)
     imported_text.update(
       furigana_hash: furigana_hash
     )
-
+    
     initial_text_arr = []
-
-    book.search('.main .calibre').each do |element|
+    
+    book.search('.calibre').each do |element|
       initial_text_arr << element.text.strip
     end
-
+        
     ## remove blank lines from text array
     full_text_arr = initial_text_arr.reject { |s| s.empty? }
 

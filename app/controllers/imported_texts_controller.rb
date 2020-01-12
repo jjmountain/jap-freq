@@ -10,9 +10,12 @@ class ImportedTextsController < ApplicationController
   # GET /imported_texts/1
   # GET /imported_texts/1.json
   def show
-    book = Nokogiri::HTML(@imported_text.content.download)
-    @book_content = book.search('.main').text
-    raise
+  end
+
+  def tokenize_text
+    TokenizeJob.perform_now(params[:id])
+    flash.notice = "Tokenize job performed successfully"
+
   end
 
   # GET /imported_texts/new
@@ -27,9 +30,12 @@ class ImportedTextsController < ApplicationController
   # POST /imported_texts
   # POST /imported_texts.json
   def create
+    file_html = File.read(params[:imported_text][:html_content].path)
+
     @imported_text = ImportedText.new(imported_text_params)
 
-    
+    @imported_text.html_content = file_html
+
     respond_to do |format|
       if @imported_text.save
         format.html { redirect_to @imported_text, notice: 'Imported text was successfully created.' }
@@ -40,6 +46,11 @@ class ImportedTextsController < ApplicationController
       end
     end
    
+  end
+
+  def import_html
+    file_html = File.read(params[:content].path)
+    
   end
 
   # PATCH/PUT /imported_texts/1

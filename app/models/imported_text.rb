@@ -1,6 +1,5 @@
 class ImportedText < ApplicationRecord
   has_many :text_entries, dependent: :destroy
-  has_one_attached :content
   has_one_attached :cover_photo
   serialize :furigana_hash
 

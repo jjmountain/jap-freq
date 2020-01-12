@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_10_145353) do
+ActiveRecord::Schema.define(version: 2020_01_11_135343) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -42,6 +42,7 @@ ActiveRecord::Schema.define(version: 2020_01_10_145353) do
     t.datetime "updated_at", precision: 6, null: false
     t.string "missing_words", default: [], array: true
     t.text "furigana_hash"
+    t.text "html_content"
   end
 
   create_table "j_word_tags", force: :cascade do |t|
