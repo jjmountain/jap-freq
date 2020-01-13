@@ -2,7 +2,8 @@ namespace :import do
   require 'pry'
   
   def create_entries_for_p_nouns(json_entries)
-    json_entries.each do |word|
+    length = json_entries.length
+    json_entries.each_with_index do |word, index|
       new_entry = PNoun.new(
         entry: word[0],
         english: word[5]
@@ -11,27 +12,31 @@ namespace :import do
         new_entry.reading = word[1] 
       end
       new_entry.save!
+      puts "created PNoun #{index}/#{length}"
+      
       unless word[2].empty?
         tags = word[2].split(' ')
         tags.each do |tag|
           # find associated MetaTag object for each meta tag
-          meta_tag = MetaTag.where(tag: tag)
-          # binding.pry
-          PNounTag.create(
+          meta_tag = MetaTag.find_by(tag: tag)
+          new_p_noun_tag = PNounTag.new(
             p_noun_id: new_entry.id,
-            meta_tag_id: meta_tag[0].id
+            meta_tag_id: meta_tag.id
           )
+          new_p_noun_tag.save
         end
       end
       unless word[7].empty?
         tags = word[7].split(' ')
         tags.each do |tag|
           # find associated MetaTag object for each meta tag
-          meta_tag = MetaTag.where(tag: tag)
-          PNounTag.create(
+          meta_tag = MetaTag.find_by(tag: tag)
+          new_p_noun_tag = PNounTag.new(
             p_noun_id: new_entry.id,
-            meta_tag_id: meta_tag[0].id
+            meta_tag_id: meta_tag.id
           )
+          new_p_noun_tag.save
+          puts "created PNounTag from 8th column"
         end
       end
     end
@@ -41,12 +46,14 @@ namespace :import do
   task add_rank: :environment do 
     filename = File.join Rails.root, "BCCWJ_frequencylist_suw_ver1_0.tsv"
     CSV.foreach(filename, col_sep: "\t", quote_char: nil, headers: :first_row) do |row|
-      jword = JWord.find_by(entry: row['lemma'])
-      if jword
-        puts "adding rank for #{jword.entry}"
-        jword.cwj_rank = row['rank']
-        jword.save
-        puts "#{row['rank']} rank added!"
+      jwords = JWord.where(entry: row['lemma']).or(JWord.where(reading: row['lemma']))
+      if jwords
+        puts "found #{jwords.count} words matching that lemma"
+        jwords.each do |jword|
+          jword.cwj_rank = row['rank']
+          jword.save
+          puts "#{row['rank']} rank added to #{row['lemma']}"
+        end
       end
     end
   end
@@ -88,7 +95,7 @@ namespace :import do
     end
 end
 
-  desc "add entires from Names dict"
+  desc "add entries from Names dict"
   task add_proper_nouns: :environment do
     (1..75).to_a.each do |index|
       file_path = "./db/name-dict/term_bank_#{index}.json"
